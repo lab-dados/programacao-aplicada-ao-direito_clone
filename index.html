@@ -1,0 +1,278 @@
+<!doctype html>
+<!--
+  Esta página roda o analise_2.py dentro do navegador, com o Pyodide: o Python compilado para
+  WebAssembly. Não há servidor executando código. O navegador baixa o Python, o pandas e o
+  matplotlib, lê o analise_2.py que está ao lado desta página e chama as funções dele.
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Análise de sentenças · Programação Aplicada ao Direito</title>
+<style>
+  :root {
+    --azul: #023a78; --azul-claro: #0791d3; --tinta: #22303d; --cinza: #5b6b7c;
+    --borda: #d3dee9; --neve: #f5f8fb; --fundo: #fcfcfb; --erro: #b42318;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; color: var(--tinta);
+         background: var(--fundo); line-height: 1.5; }
+  header { background: var(--azul); color: #fff; padding: 2rem 1.5rem 1.8rem; }
+  header .miolo { max-width: 64rem; margin: 0 auto; }
+  header h1 { margin: 0 0 .4rem; font-size: 1.7rem; }
+  header p { margin: 0 0 .6rem; max-width: 52rem; color: #dfe9f5; }
+  header code { background: rgba(255, 255, 255, .14); color: #fff; }
+  .pyodide { margin-top: 1.1rem; padding: .9rem 1.1rem; border-left: 4px solid var(--azul-claro);
+             background: rgba(255, 255, 255, .08); border-radius: 0 6px 6px 0; max-width: 52rem; }
+  .pyodide strong { color: #fff; }
+  .pyodide ol { margin: .4rem 0 0; padding-left: 1.3rem; color: #dfe9f5; }
+  .pyodide li { margin: .15rem 0; }
+  main { max-width: 64rem; margin: 0 auto; padding: 1.5rem; }
+  h2 { color: var(--azul); font-size: 1.25rem; margin: 2.2rem 0 .6rem; }
+  .cartao { background: var(--neve); border: 1px solid var(--borda); border-top: 4px solid var(--azul-claro);
+            border-radius: 6px; padding: 1rem 1.2rem; }
+  .controles { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; margin-top: .8rem; }
+  button, label.botao { font: inherit; font-size: .95rem; border-radius: 6px; padding: .55rem 1rem; cursor: pointer;
+           border: 1px solid var(--azul); }
+  label.botao { background: var(--azul); color: #fff; }
+  button { background: #fff; color: var(--azul); }
+  button:disabled, label.botao.desligado { opacity: .5; cursor: wait; }
+  input[type=file] { position: absolute; left: -9999px; }
+  #status { margin: .8rem 0 0; color: var(--cinza); font-size: .95rem; min-height: 1.5em; }
+  #status.erro { color: var(--erro); font-weight: bold; }
+  code { background: #edf2f7; padding: .05rem .3rem; border-radius: 3px; font-size: .9em; }
+  .colunas { font-size: .9rem; color: var(--cinza); }
+  #resultado { display: none; }
+  .graficos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(28rem, 100%), 1fr)); gap: 1rem; }
+  .graficos img { width: 100%; height: auto; border: 1px solid var(--borda); border-radius: 6px; background: #fff; }
+  .grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr)); gap: 1.2rem; }
+  .grade > div { min-width: 0; }
+  .grade > div > div { overflow-x: auto; }
+  .grade h3 { font-size: 1rem; margin: 0 0 .4rem; color: var(--azul); }
+  table.tabela { border-collapse: collapse; width: 100%; font-size: .9rem; background: #fff; }
+  table.tabela th, table.tabela td { padding: .35rem .6rem; border-bottom: 1px solid var(--borda); text-align: right; }
+  table.tabela th:first-child, table.tabela td:first-child,
+  table.tabela tbody th { text-align: left; }
+  table.tabela thead th { color: var(--cinza); font-weight: bold; border-bottom: 2px solid var(--borda); }
+  footer { max-width: 64rem; margin: 2rem auto; padding: 0 1.5rem 2rem; color: var(--cinza); font-size: .85rem; }
+  a { color: var(--azul-claro); }
+  header a { color: #fff; }
+</style>
+</head>
+<body>
+<header>
+  <div class="miolo">
+    <h1>Análise de sentenças: êxito do autor e acordos</h1>
+    <p>Esta página roda o <code>analise_2.py</code> deste repositório dentro do seu navegador e mostra
+       as mesmas tabelas e os mesmos seis gráficos, para a base do curso ou para qualquer CSV no mesmo
+       formato.</p>
+
+    <div class="pyodide">
+      <strong>O que é o Pyodide?</strong>
+      <p>É o Python adaptado para rodar dentro do navegador, em
+         <a href="https://webassembly.org/">WebAssembly</a>. Normalmente, uma página só mostra
+         arquivos, e o Python roda no seu computador ou num servidor. Com o
+         <a href="https://pyodide.org/">Pyodide</a>, quem roda o Python é o próprio
+         navegador. Quando você abre esta página:</p>
+      <ol>
+        <li>o navegador baixa o Python, o pandas e o matplotlib (na primeira vez, leva alguns segundos);</li>
+        <li>lê o <code>analise_2.py</code> que está ao lado desta página;</li>
+        <li>chama as funções dele com a base que você escolher, e mostra o resultado aqui.</li>
+      </ol>
+      <p style="margin-top:.6rem">Por isso a página funciona no GitHub Pages, que só guarda arquivos,
+         e o CSV que você envia não sai do seu computador.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="cartao">
+    <strong>Envie uma base no mesmo formato da base do curso</strong>, um CSV com pelo menos as colunas:
+    <p class="colunas"><code>ano</code> <code>setor</code> <code>resultado</code> <code>ganhou_autor</code></p>
+    <div class="controles">
+      <label class="botao desligado" id="botao-arquivo" for="arquivo">Escolher arquivo CSV</label>
+      <input type="file" id="arquivo" accept=".csv,text/csv" disabled>
+      <button id="botao-exemplo" disabled>Usar a base de exemplo</button>
+    </div>
+    <p id="status">Carregando o Python no navegador. Na primeira vez, leva alguns segundos.</p>
+  </section>
+
+  <div id="resultado">
+    <h2 id="titulo-base">A base</h2>
+    <div class="grade">
+      <div><h3>Quantos processos entram na análise</h3><div id="t-cobertura"></div></div>
+      <div><h3>Taxa de acordo e taxa de êxito, por setor</h3><div id="t-acordo-exito"></div></div>
+    </div>
+
+    <h2>Gráficos</h2>
+    <div class="graficos" id="graficos"></div>
+
+    <h2>Tabelas</h2>
+    <div class="grade">
+      <div><h3>Taxa de êxito do autor, por setor</h3><div id="t-exito-setor"></div></div>
+      <div><h3 id="h-exito-ano">Taxa de êxito do autor, por ano</h3><div id="t-exito-ano"></div></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  As taxas de êxito deixam de fora os acordos e as sentenças sem resultado. Os gráficos usam outra
+  fonte que a do <code>python analise_2.py</code>, porque a Segoe UI não existe no navegador; os
+  números são os mesmos. Feito no Encontro 6 de <em>Programação Aplicada ao Direito</em> (LabDados,
+  FGV Direito SP).
+</footer>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js"></script>
+<script>
+// Ponte entre a página e o analise_2.py: lê a base, roda as funções e devolve tabelas em HTML e
+// gráficos em PNG. A análise em si está toda no analise_2.py.
+const PONTE = `
+import base64, io, json
+import pandas as pd
+import matplotlib.pyplot as plt
+import analise_2 as a
+
+COLUNAS_NECESSARIAS = ["ano", "setor", "resultado", "ganhou_autor"]
+NOMES = {
+    "contagem": "casos", "vitorias": "vitórias", "taxa_exito": "taxa de êxito",
+    "ic_inf": "IC 95% (de)", "ic_sup": "IC 95% (até)", "n": "casos", "v": "vitórias",
+    "p": "taxa de êxito", "acordo": "taxa de acordo", "total": "processos com resultado",
+}
+
+def _pct(v):
+    return f"{v * 100:.1f}%".replace(".", ",")
+
+def _int(v):
+    return f"{int(v):,}".replace(",", ".")
+
+FORMATOS = {
+    "casos": _int, "vitórias": _int, "processos com resultado": _int,
+    "taxa de êxito": _pct, "taxa de acordo": _pct, "IC 95% (de)": _pct, "IC 95% (até)": _pct,
+}
+
+def _html(tabela):
+    tabela = tabela.rename(columns=NOMES)
+    return tabela.to_html(classes="tabela", border=0, na_rep="—",
+                          formatters={c: f for c, f in FORMATOS.items() if c in tabela.columns})
+
+def _png(fig):
+    buffer = io.BytesIO()
+    fig.savefig(buffer, format="png", dpi=110)
+    plt.close(fig)
+    return base64.b64encode(buffer.getvalue()).decode()
+
+def _normalizar(caminho):
+    # Planilhas salvas pelo Excel em português costumam usar ponto e vírgula.
+    with open(caminho, encoding="utf-8-sig") as arquivo:
+        cabecalho = arquivo.readline()
+    if ";" in cabecalho and "," not in cabecalho:
+        pd.read_csv(caminho, sep=";", encoding="utf-8-sig").to_csv(caminho, index=False)
+
+def _conferir(caminho):
+    colunas = pd.read_csv(caminho, nrows=0, encoding="utf-8-sig").columns
+    faltando = [c for c in COLUNAS_NECESSARIAS if c not in colunas]
+    if faltando:
+        raise ValueError("A base não está no formato esperado. Faltam as colunas: " + ", ".join(faltando))
+
+def analisar(caminho):
+    _normalizar(caminho)
+    _conferir(caminho)
+    p = a.carregar_processos(caminho)
+    cobertura = a.resumo_cobertura(p).map(_int).to_frame()
+    acordo_exito = a.calcular_acordo_e_exito_por_setor(p)[["acordo", "taxa_exito", "total"]]
+    return json.dumps({
+        "linhas": len(p),
+        "minimo_ano": a.MINIMO_CASOS_ANO,
+        "cobertura": cobertura.to_html(classes="tabela", border=0, header=False),
+        "acordo_exito": _html(acordo_exito.sort_values("taxa_exito", ascending=False)),
+        "exito_setor": _html(a.calcular_taxa_exito_por_setor(p)),
+        "exito_ano": _html(a.calcular_taxa_exito_por_ano(p)),
+        "graficos": [[nome, _png(funcao(p))] for nome, funcao in a.GRAFICOS.items()],
+    })
+`;
+
+const status = document.getElementById("status");
+const entrada = document.getElementById("arquivo");
+const botaoArquivo = document.getElementById("botao-arquivo");
+const botaoExemplo = document.getElementById("botao-exemplo");
+
+function avisar(texto, erro = false) {
+  status.textContent = texto;
+  status.classList.toggle("erro", erro);
+}
+
+function ligarControles(ligado) {
+  entrada.disabled = !ligado;
+  botaoExemplo.disabled = !ligado;
+  botaoArquivo.classList.toggle("desligado", !ligado);
+}
+
+const pronto = (async () => {
+  const py = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.29.5/full/" });
+  avisar("Carregando o pandas e o matplotlib...");
+  await py.loadPackage(["pandas", "matplotlib"]);
+  const resposta = await fetch("analise_2.py", { cache: "no-store" });
+  if (!resposta.ok) throw new Error("Não encontrei o analise_2.py ao lado desta página.");
+  py.FS.writeFile("analise_2.py", await resposta.text());
+  py.runPython('import os, sys\nos.environ["MPLBACKEND"] = "AGG"\nsys.path.insert(0, ".")');
+  py.runPython(PONTE);
+  return py;
+})();
+
+pronto.then(() => {
+  ligarControles(true);
+  avisar("Pronto. Escolha um arquivo CSV ou use a base de exemplo.");
+}).catch(erro => avisar("Não consegui carregar o Python: " + erro.message, true));
+
+async function rodar(bytes, nome) {
+  ligarControles(false);
+  avisar(`Analisando ${nome}...`);
+  try {
+    const py = await pronto;
+    py.FS.writeFile("/tmp/base.csv", bytes);
+    const r = JSON.parse(py.globals.get("analisar")("/tmp/base.csv"));
+    mostrar(r, nome);
+    avisar(`Pronto: ${nome}, com ${r.linhas.toLocaleString("pt-BR")} processos.`);
+  } catch (erro) {
+    // Do erro do Python, só a última linha interessa a quem usa a página.
+    const linhas = String(erro.message).trim().split("\n");
+    avisar("Não deu para analisar esta base. " + linhas[linhas.length - 1], true);
+    document.getElementById("resultado").style.display = "none";
+  } finally {
+    ligarControles(true);
+  }
+}
+
+function mostrar(r, nome) {
+  document.getElementById("titulo-base").textContent = "A base: " + nome;
+  const tabelas = {
+    "t-cobertura": r.cobertura, "t-acordo-exito": r.acordo_exito,
+    "t-exito-setor": r.exito_setor, "t-exito-ano": r.exito_ano,
+  };
+  for (const [id, html] of Object.entries(tabelas)) document.getElementById(id).innerHTML = html;
+  document.getElementById("h-exito-ano").textContent =
+    `Taxa de êxito do autor, por ano (${r.minimo_ano} casos ou mais)`;
+  const graficos = document.getElementById("graficos");
+  graficos.innerHTML = "";
+  for (const [arquivo, png] of r.graficos) {
+    const img = document.createElement("img");
+    img.src = "data:image/png;base64," + png;
+    img.alt = arquivo;
+    graficos.appendChild(img);
+  }
+  document.getElementById("resultado").style.display = "block";
+}
+
+entrada.addEventListener("change", async () => {
+  const arquivo = entrada.files[0];
+  if (arquivo) await rodar(new Uint8Array(await arquivo.arrayBuffer()), arquivo.name);
+  entrada.value = "";
+});
+
+botaoExemplo.addEventListener("click", async () => {
+  const resposta = await fetch("dados/processos.csv");
+  await rodar(new Uint8Array(await resposta.arrayBuffer()), "processos.csv (base de exemplo)");
+});
+</script>
+</body>
+</html>
